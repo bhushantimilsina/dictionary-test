@@ -1,3 +1,4 @@
+import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
@@ -16,9 +17,11 @@ public class CountAlphaMapAsync {
     // Custom dict file path
     private static final String filepathProp = System.getProperty("dict.filepath");
 
+    // args0: Thread pool size
     public static void main(final String[] args) throws Exception {
+        if (args.length < 1) throw new IllegalArgumentException("Specify total pool size as parameter");
         final NumberFormat numberFormat = NumberFormat.getNumberInstance(Locale.US);
-        final ExecutorService executor = Executors.newFixedThreadPool(16);
+        final ExecutorService executor = Executors.newFixedThreadPool(Integer.parseInt(args[0]));
         Map<Character, Long> counterMap = new ConcurrentHashMap<>();
 
         char[] alphabets = {'a', 'b', 'c', 'd', 'e', 'f', 'g', 'h', 'i', 'j', 'k', 'l', 'm', 'n', 'o', 'p',
@@ -26,10 +29,9 @@ public class CountAlphaMapAsync {
         // Initialize counterMap
         //IntStream.rangeClosed(65, 90).forEach(ch -> counterMap.put(Character.toString(ch), 0L));
 
-
         // Read the file and total number of words for each alphabet
         final Path filepath = filepathProp != null ? Paths.get(filepathProp) : Paths.get("data/english3.txt");
-        List<String> wordList = Files.readAllLines(filepath);
+        List<String> wordList = Files.readAllLines(filepath, StandardCharsets.UTF_8);
         System.out.println(LINE);
         System.out.printf("\tTotal Words: %s\n", numberFormat.format(wordList.size()));
         System.out.println(LINE);
