@@ -35,18 +35,18 @@ public class CountAlphaMapAsync {
         System.out.println(LINE);
 
         // Count the alphabets
-        final long startTime = System.currentTimeMillis();
+        final long startTime = System.nanoTime();
         //counterMap.forEach((k, v) -> executor.submit(() -> countAlpha(counterMap, wordList, k)));
         for (final char alpha : alphabets) {
             executor.submit(() -> countAlpha(counterMap, wordList, alpha));
         }
         awaitTerminationAfterShutdown(executor);
-        final long stopTime = System.currentTimeMillis();
+        final long stopTime = System.nanoTime();
 
         counterMap.forEach((k, v) -> System.out.printf("\t%s --> %s\n", k, numberFormat.format(v)));
 
         System.out.println("\n" + LINE);
-        System.out.println("\tTime taken: " + (stopTime - startTime) + " ms");
+        System.out.println("\tTime taken: " + (stopTime - startTime) / 1000000 + " ms");
         System.out.println(LINE);
         System.out.println();
         System.exit(0);
