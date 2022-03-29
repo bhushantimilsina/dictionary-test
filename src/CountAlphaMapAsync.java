@@ -9,7 +9,6 @@ import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.concurrent.TimeUnit;
-import java.util.stream.IntStream;
 
 public class CountAlphaMapAsync {
     private static final String LINE = "--------------------------------------------------------------------------------";
@@ -20,10 +19,13 @@ public class CountAlphaMapAsync {
     public static void main(final String[] args) throws Exception {
         final NumberFormat numberFormat = NumberFormat.getNumberInstance(Locale.US);
         final ExecutorService executor = Executors.newFixedThreadPool(16);
-        Map<String, Long> counterMap = new ConcurrentHashMap<>();
+        Map<Character, Long> counterMap = new ConcurrentHashMap<>();
 
+        char[] alphabets = {'a', 'b', 'c', 'd', 'e', 'f', 'g', 'h', 'i', 'j', 'k', 'l', 'm', 'n', 'o', 'p',
+                'q', 'r', 's', 't', 'u', 'v', 'w', 'x', 'y', 'z'};
         // Initialize counterMap
-        IntStream.rangeClosed(65, 90).forEach(ch -> counterMap.put(Character.toString(ch), 0L));
+        //IntStream.rangeClosed(65, 90).forEach(ch -> counterMap.put(Character.toString(ch), 0L));
+
 
         // Read the file and total number of words for each alphabet
         final Path filepath = filepathProp != null ? Paths.get(filepathProp) : Paths.get("data/english3.txt");
@@ -34,7 +36,10 @@ public class CountAlphaMapAsync {
 
         // Count the alphabets
         final long startTime = System.currentTimeMillis();
-        counterMap.forEach((k, v) -> executor.submit(() -> countAlpha(counterMap, wordList, k)));
+        //counterMap.forEach((k, v) -> executor.submit(() -> countAlpha(counterMap, wordList, k)));
+        for (final char alpha : alphabets) {
+            executor.submit(() -> countAlpha(counterMap, wordList, alpha));
+        }
         awaitTerminationAfterShutdown(executor);
         final long stopTime = System.currentTimeMillis();
 
@@ -47,8 +52,8 @@ public class CountAlphaMapAsync {
         System.exit(0);
     }
 
-    private static void countAlpha(Map<String, Long> counterMap, final List<String> wordList, final String prefix) {
-        counterMap.put(prefix, wordList.stream().filter(word -> prefix.equalsIgnoreCase(word.substring(0, 1))).count());
+    private static void countAlpha(Map<Character, Long> counterMap, final List<String> wordList, final char prefix) {
+        counterMap.put(prefix, wordList.stream().filter(word -> prefix == word.charAt(0)).count());
     }
 
     private static void awaitTerminationAfterShutdown(final ExecutorService threadPool) {
