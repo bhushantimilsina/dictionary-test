@@ -30,7 +30,7 @@ public class CountAlphaMapAsync {
         //IntStream.rangeClosed(65, 90).forEach(ch -> counterMap.put(Character.toString(ch), 0L));
 
         // Read the file and total number of words for each alphabet
-        final Path filepath = filepathProp != null ? Paths.get(filepathProp) : Paths.get("data/english3.txt");
+        final Path filepath = filepathProp != null ? Paths.get(filepathProp) : Paths.get("data/english5.txt");
         List<String> wordList = Files.readAllLines(filepath, StandardCharsets.UTF_8);
         System.out.println(LINE);
         System.out.printf("\tTotal Words: %s\n", numberFormat.format(wordList.size()));
